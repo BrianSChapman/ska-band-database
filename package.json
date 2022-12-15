@@ -18,7 +18,8 @@
   },
   "homepage": "https://github.com/BrianSChapman/employee-tracker#readme",
   "dependencies": {
-    "inquirer": "^9.1.4",
+    "dotenv": "^16.0.3",
+    "inquirer": "^8.2.4",
     "mysql2": "^2.3.3"
   }
 }
