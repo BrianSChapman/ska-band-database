@@ -8,7 +8,7 @@ const {
   addDepartment,
   addRole,
   addEmployee,
-  updateRole
+  updateRole,
 } = require("./queries");
 require("dotenv").config();
 
@@ -34,27 +34,23 @@ function startPrompt() {
     .then(function (answers) {
       switch (answers.welcome) {
         case "View all departments":
-          viewDepartments();
+          viewDepartments().then(() => setTimeout(startPrompt(), 2000));
           break;
 
         case "View all roles":
-          viewRoles();
+          viewRoles().then(() => setTimeout(startPrompt(), 2000));
           break;
 
         case "View all employees":
-          viewEmployees();
+          viewEmployees().then(() => setTimeout(startPrompt(), 2000));
           break;
 
         case "Add a department":
-          addDepartment();
+          addDepartment().then(() => setTimeout(startPrompt(), 2000));
           break;
 
         case "Add a role":
-          addRole();
-          break;
-
-        case "Add a role":
-          addRole();
+          addRole().then(() => setTimeout(startPrompt(), 2000));
           break;
 
         case "I'm done":

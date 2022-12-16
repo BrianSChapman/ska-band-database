@@ -103,20 +103,23 @@ function addEmployee() {
       );
     });
 }
-    function updateRole() {
-        dbquery(SELECT * FROM employee)
-        inquirer
-           .prompt(
-                {
-                    type: "",
-                    message: "Please provide a title for the new role:",
-                    name: "newTitle",
-                },
-                {
-                    type: "input",
-                }
+// function updateRole() {
+//   db.query("SELECT * FROM employee", function (err, result) {
+//     console.log(result);
+// })
+//   inquirer.prompt(
+//     {
+//       type: "list",
+//       message: "Please choose employee",
+//       name: "employee",
+//       choices: [result],
+//     },
+//     {
+//       type: "input",
+//     }
+//   );
+// }
 
-    )}
 module.exports = {
   viewDepartments,
   viewRoles,
@@ -124,5 +127,5 @@ module.exports = {
   addDepartment,
   addRole,
   addEmployee,
-  updateRole
+  updateRole,
 };
