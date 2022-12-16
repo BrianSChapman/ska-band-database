@@ -1,9 +1,11 @@
+const mysql = require("mysql2");
+const cTable = require("console.table");
+
 const db = mysql.createConnection({
-    database: process.env.DB_NAME,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    host: "localhost",
-  });
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+});
 
 const inquirer = require("inquirer");
 
@@ -62,18 +64,65 @@ function addRole() {
     .then(
       function (answers) {
         return db.query(
-          `INSERT INTO role (title, salary, department_id) VALUES (${answers.newTitle}, ${answers.newSalary}, ${answers.newDepartment})`
+          `INSERT INTO role (title, salary, department_id) 
+          VALUES (${answers.newTitle}, ${answers.newSalary}, ${answers.newDepartment})`
         );
       }
-    //   write a .catch here
+      //   write a .catch here
     );
 }
-// START HERE BUILDING OUT THE FUNCTION FOR UPDATING AN EMPLOYEE ROLE
+function addEmployee() {
+  inquirer
+    .prompt(
+      {
+        type: "input",
+        message: "Please provide employee's first name:",
+        name: "firstName",
+      },
+      {
+        type: "input",
+        message: "Please provide employee's last name:",
+        name: "lastName",
+      },
+      {
+        type: "input",
+        message: "Please provide employee's role in the organization:",
+        name: "newRole",
+      },
+      {
+        type: "input",
+        message: "Please designate the employee's manager:",
+        name: "newManager",
+      }
+    )
 
+    .then(function (answers) {
+      return db.query(
+        `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+         VALUES (${answers.firstName}, ${answers.lastName}, ${answers.newRole}, ${answers.newManager})`
+      );
+    });
+}
+    function updateRole() {
+        dbquery(SELECT * FROM employee)
+        inquirer
+           .prompt(
+                {
+                    type: "",
+                    message: "Please provide a title for the new role:",
+                    name: "newTitle",
+                },
+                {
+                    type: "input",
+                }
+
+    )}
 module.exports = {
   viewDepartments,
   viewRoles,
   viewEmployees,
   addDepartment,
   addRole,
+  addEmployee,
+  updateRole
 };

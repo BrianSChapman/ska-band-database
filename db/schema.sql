@@ -1,4 +1,4 @@
-DROP DATABASE IF EXISTS employeedirectory_db;
+DROP DATABASE IF EXISTS employeeDirectory_db;
 CREATE DATABASE employeeDirectory_db;
 
 USE employeeDirectory_db;

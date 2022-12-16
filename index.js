@@ -1,20 +1,16 @@
-const mysql = require("mysql2");
 const inquirer = require("inquirer");
+mysql = require("mysql2");
+const cTable = require("console.table");
 const {
   viewDepartments,
   viewRoles,
   viewEmployees,
   addDepartment,
   addRole,
+  addEmployee,
+  updateRole
 } = require("./queries");
 require("dotenv").config();
-
-// const db = mysql.createConnection({
-//   database: process.env.DB_NAME,
-//   user: process.env.DB_USER,
-//   password: process.env.DB_PASSWORD,
-//   host: "localhost",
-// });
 
 console.log(`Connected to the Ska Band database.`);
 
@@ -38,23 +34,27 @@ function startPrompt() {
     .then(function (answers) {
       switch (answers.welcome) {
         case "View all departments":
-          viewDepartments().then(() => setTimeout(startPrompt(), 2000));
+          viewDepartments();
           break;
 
         case "View all roles":
-          viewRoles().then(() => setTimeout(startPrompt(), 2000));
+          viewRoles();
           break;
 
         case "View all employees":
-          viewEmployees().then(() => setTimeout(startPrompt(), 2000));
+          viewEmployees();
           break;
 
         case "Add a department":
-          addDepartment().then(() => setTimeout(startPrompt(), 2000));
+          addDepartment();
           break;
 
         case "Add a role":
-          addRole().then(() => setTimeout(startPrompt(), 2000));
+          addRole();
+          break;
+
+        case "Add a role":
+          addRole();
           break;
 
         case "I'm done":
