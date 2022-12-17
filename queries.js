@@ -1,13 +1,13 @@
+const inquirer = require("inquirer");
+const PORT = process.env.PORT || 3001;
 const mysql = require("mysql2");
-const cTable = require("console.table");
 
 const db = mysql.createConnection({
+  host: "localhost",
   database: process.env.DB_NAME,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
 });
-
-const inquirer = require("inquirer");
 
 function viewDepartments() {
   return db.query("SHOW TABLE department", function (err, results) {
@@ -48,7 +48,7 @@ function addDepartment() {
     })
     .then(function (answers) {
       return db.query(
-        `INSERT INTO department (name) VALUES ('${answers.addDepartment}'`,
+        `INSERT INTO department (name) VALUES (${answers.addDepartment}`,
         function (err, results) {
           if (err) {
             console.log(err);
@@ -87,8 +87,8 @@ function addRole() {
     }
   );
 
-  let departmentAnswer;
   for (let i = 0; i < departments.length; i++) {
+    let departmentAnswer;
     if (departments[i].department.id === newDepartment) {
       departmentAnswer = departments[i];
     }
@@ -154,12 +154,22 @@ function updateRole() {
     choices: employees.map((employeeName) => {
       return {
         name: employeeName.first_name + " " + employeeName.last_name,
-        value: employeeName.id
+        value: employeeName.id,
+      };
+    }),
+  });
+  let roles = db.query("SELECT * FROM role");
+  inquirer.prompt({
+    type: "list",
+    message: "Please choose a new role",
+    choices: roles.map((roleChoice) => {
+      return {
+        name: roleChoice.title,
+        value: roleChoice.id,
       };
     }),
   });
 }
-
 module.exports = {
   viewDepartments,
   viewRoles,
