@@ -11,19 +11,31 @@ const inquirer = require("inquirer");
 
 function viewDepartments() {
   return db.query("SHOW TABLE department", function (err, results) {
-    console.table(results);
+    if (err) {
+      console.log(err);
+    } else {
+      console.table(results);
+    }
   });
 }
 
 function viewRoles() {
   return db.query("SHOW TABLE role", function (err, results) {
-    console.table(results);
+    if (err) {
+      console.log(err);
+    } else {
+      console.table(results);
+    }
   });
 }
 
 function viewEmployees() {
-  return db.query("SHOW TABLE employees", function (err, results) {
-    console.table(results);
+  return db.query("SHOW TABLE employee", function (err, results) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.table(results);
+    }
   });
 }
 
@@ -36,7 +48,14 @@ function addDepartment() {
     })
     .then(function (answers) {
       return db.query(
-        `INSERT INTO department (name) VALUES ('${answers.addDepartment}')`
+        `INSERT INTO department (name) VALUES ('${answers.addDepartment}'`,
+        function (err, results) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log("Successfully added department");
+          }
+        }
       );
     });
 }
@@ -67,11 +86,13 @@ function addRole() {
           `INSERT INTO role (title, salary, department_id) 
           VALUES (${answers.newTitle}, ${answers.newSalary}, ${answers.newDepartment})`
         );
-      }
-      //   write a .catch here
+      }.catch(function (err) {
+        console.log(err);
+      })
     );
 }
 function addEmployee() {
+    db.query("EL")
   inquirer
     .prompt(
       {
@@ -85,12 +106,12 @@ function addEmployee() {
         name: "lastName",
       },
       {
-        type: "input",
+        type: "list",
         message: "Please provide employee's role in the organization:",
         name: "newRole",
       },
       {
-        type: "input",
+        type: "List",
         message: "Please designate the employee's manager:",
         name: "newManager",
       }
@@ -103,22 +124,22 @@ function addEmployee() {
       );
     });
 }
-// function updateRole() {
-//   db.query("SELECT * FROM employee", function (err, result) {
-//     console.log(result);
-// })
-//   inquirer.prompt(
-//     {
-//       type: "list",
-//       message: "Please choose employee",
-//       name: "employee",
-//       choices: [result],
-//     },
-//     {
-//       type: "input",
-//     }
-//   );
-// }
+function updateRole() {
+  db.query("SELECT * FROM employee", function (err, result) {
+    console.log(result);
+  });
+  inquirer.prompt(
+    {
+      type: "list",
+      message: "Please choose employee",
+      name: "employee",
+      choices: [result],
+    },
+    {
+      type: "input",
+    }
+  );
+}
 
 module.exports = {
   viewDepartments,

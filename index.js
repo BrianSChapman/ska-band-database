@@ -1,6 +1,6 @@
 const inquirer = require("inquirer");
 mysql = require("mysql2");
-const cTable = require("console.table");
+require("console.table");
 const {
   viewDepartments,
   viewRoles,
@@ -8,7 +8,7 @@ const {
   addDepartment,
   addRole,
   addEmployee,
-  updateRole,
+  // updateRole,
 } = require("./queries");
 require("dotenv").config();
 
@@ -31,8 +31,9 @@ function startPrompt() {
         "I'm done",
       ],
     })
-    .then(function (answers) {
-      switch (answers.welcome) {
+    .then(function (answer) {
+      console.log(answer);
+      switch (answer.welcome) {
         case "View all departments":
           viewDepartments().then(() => setTimeout(startPrompt(), 2000));
           break;
@@ -51,6 +52,10 @@ function startPrompt() {
 
         case "Add a role":
           addRole().then(() => setTimeout(startPrompt(), 2000));
+          break;
+
+        case "Add an employee":
+          addEmployee().then(() => setTimeout(startPrompt(), 2000));
           break;
 
         case "I'm done":
