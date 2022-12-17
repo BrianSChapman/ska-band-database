@@ -35,27 +35,27 @@ function startPrompt() {
       console.log(answer);
       switch (answer.welcome) {
         case "View all departments":
-          viewDepartments().then(() => setTimeout(startPrompt(), 2000));
+          viewDepartments();
           break;
 
         case "View all roles":
-          viewRoles().then(() => setTimeout(startPrompt(), 2000));
+          viewRoles();
           break;
 
         case "View all employees":
-          viewEmployees().then(() => setTimeout(startPrompt(), 2000));
+          viewEmployees();
           break;
 
         case "Add a department":
-          addDepartment().then(() => setTimeout(startPrompt(), 2000));
+          addDepartment();
           break;
 
         case "Add a role":
-          addRole().then(() => setTimeout(startPrompt(), 2000));
+          addRole();
           break;
 
         case "Add an employee":
-          addEmployee().then(() => setTimeout(startPrompt(), 2000));
+          addEmployee();
           break;
 
         case "I'm done":
