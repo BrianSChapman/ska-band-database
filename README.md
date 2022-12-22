@@ -12,5 +12,5 @@ This application requires the npm install of [Inquirer](https://www.npmjs.com/pa
 
 Upon opening that command line and installing the inquirer package via npm, type in **npm run start** and you'll prompted with a list of questions to answer. Based upon what you ask or what information you provide, you will receive information via Mysql tables.
 
-    ![Code Snippets and Command Line](/assets/employee-tracker.png)
+![Code Snippets and Command Line](/assets/employee-tracker.png)
     
