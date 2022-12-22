@@ -81,21 +81,23 @@ function viewDepartments() {
 }
 
 function viewRoles() {
-  return db.query("SHOW TABLE role", function (err, results) {
+  db.query("SELECT * FROM role", function (err, results) {
     if (err) {
       console.log(err);
     } else {
       console.table(results);
+      startPrompt();
     }
   });
 }
 
 function viewEmployees() {
-  return db.query("SHOW TABLE employee", function (err, results) {
+  db.query("SELECT * FROM employee", function (err, results) {
     if (err) {
       console.log(err);
     } else {
       console.table(results);
+      startPrompt();
     }
   });
 }
@@ -194,8 +196,12 @@ function addEmployee() {
     }
   ).then(function (answers) {
     return db.query(
-      `INSERT INTO employee (first_name, last_name, role_id, manager_id)
-         VALUES (${answers.firstName}, ${answers.lastName}, ${answers.newRole}, ${answers.newManager})`
+      db.query("INSERT INTO department SET ?;", {
+        first_name: answers.firstName,
+        last_name: answers.lastName,
+        role_id: answers.newRole,
+        manager_id: answers.newManager,
+      })
     );
   });
 }
