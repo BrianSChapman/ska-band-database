@@ -162,7 +162,7 @@ function addRole() {
 
 function addEmployee() {
   db.query(
-    "SELECT role.id, role.title FROM role ORDER BY role.id",
+    "SELECT * FROM employee)",
     function (err, results) {
       if (err) {
         console.log(err);
