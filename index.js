@@ -120,38 +120,43 @@ function addDepartment() {
 
 function addRole() {
   inquirer
-  .prompt({
-      type: "input",
-      message: "Please provide a title for the new role:",
-      name: "newTitle",
-    },
-    {
-      type: "input",
-      message: "Please provide a starting salary for the new role:",
-      name: "newSalary",
-    },
-    {
-      type: "list",
-      message: "Please designate the new role's department:",
-      name: "newDepartment",
-      choices: [
-        "Horn Section",
-        "Drums",
-        "Bass",
-        "Auxiliary Percussion",
-        "Guitar",
-        "Vocals",
-      ],
-    })
+    .prompt(
+      {
+        type: "input",
+        message: "Please provide a title for the new role:",
+        name: "newTitle",
+      },
+      {
+        type: "input",
+        message: "Please provide a starting salary for the new role:",
+        name: "newSalary",
+      },
+      {
+        type: "list",
+        message: "Please designate the new role's department:",
+        name: "newDepartment",
+        choices: [
+          "1- Horn Section",
+          "2- Drums",
+          "3- Bass",
+          "4- Auxiliary Percussion",
+          "5- Guitar",
+          "6-Vocals",
+        ],
+      }
+    )
     .then(function (answers) {
-      db.query("INSERT INTO role SET ? ? ? ;", {
-        title: answers.newTitle,
-        salary:answers.newSalary,
-        department_id: answers.newDepartment,
-      });
+      db.query(
+        "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?);",
+        {
+          title: answers.newTitle,
+          salary: answers.newSalary,
+          department_id: answers.newDepartment,
+        }
+      );
       viewDepartments();
       startPrompt();
-    })
+    });
 }
 
 //   for (let i = 0; i < departments.length; i++) {
@@ -170,45 +175,50 @@ function addRole() {
 // }
 
 function addEmployee() {
-  db.query("SELECT * FROM employee)", function (err, results) {
+  db.query("SELECT * FROM role)", function (err, res) {
     if (err) {
       console.log(err);
+    
+      const role = res.map(({ department_id, title, salary }) => ({
+        department_id: department_id,
+        title: title,
+        salary: salary
+      }));
     }
-
-    const roleList = results.role.title;
-
-    inquirer.prompt(
-      {
-        type: "input",
-        message: "Please provide employee's first name:",
-        name: "firstName",
-      },
-      {
-        type: "input",
-        message: "Please provide employee's last name:",
-        name: "lastName",
-      },
-      {
-        type: "list",
-        message: "Please provide employee's role in the organization:",
-        name: "newRole",
-        choices: [roleList],
-      },
-      {
-        type: "List",
-        message: "Please designate the employee's manager:",
-        name: "newManager",
-      }
-    );
-  }).then(function (answers) {
-    return db.query(
-      db.query("INSERT INTO department SET ?;", {
-        first_name: answers.firstName,
-        last_name: answers.lastName,
-        role_id: answers.newRole,
-        manager_id: answers.newManager,
-      })
-    );
+    inquirer
+      .prompt(
+        {
+          type: "input",
+          message: "Please provide employee's first name:",
+          name: "firstName",
+        },
+        {
+          type: "input",
+          message: "Please provide employee's last name:",
+          name: "lastName",
+        },
+        {
+          type: "list",
+          message: "Please provide employee's role in the organization:",
+          name: "newRole",
+          choices: role
+        },
+        {
+          type: "List",
+          message: "Please designate the employee's manager:",
+          name: "newManager",
+        }
+      )}
+      .then((answers) => {
+        db.query(
+          db.query("INSERT INTO department SET ?;", {
+            first_name: answers.firstName,
+            last_name: answers.lastName,
+            role_id: answers.newRole,
+            manager_id: answers.newManager,
+          })
+        );
+      });
   });
 }
 
