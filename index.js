@@ -17,6 +17,7 @@ db.connect((err) => {
   startPrompt();
 });
 
+// Initial List of tasks for user
 function startPrompt() {
   inquirer
     .prompt({
@@ -34,6 +35,7 @@ function startPrompt() {
         "I'm done",
       ],
     })
+    // Function triggered by user's choice in initial prompt
     .then((answer) => {
       switch (answer.welcome) {
         case "View all departments":
@@ -160,50 +162,50 @@ function addRole() {
 }
 
 function addEmployee() {
-  db.query("SELECT * FROM role", function (err, res) {
-    if (err) {
-      console.log(err);
-    }
-    const role = res.map(({ department_id, title, salary }) => ({
-      department_id: department_id,
-      title: title,
-      salary: salary,
-    }));
+  db.query("SELECT * FROM role", function (err, roleInfo) {
+    db.query(
+      "SELECT manager_id FROM employee",
+      function (err, managerId) {
+        const role = roleInfo.map(({ department_id, title, salary }) => ({
+          department_id: department_id,
+          title: title,
+          salary: salary,
+        }));
+        const managerList = managerId.map(({ manager_id }) => ({
+          manager: manager_id,
+        }));
+        inquirer.prompt(
+          {
+            type: "input",
+            message: "Please provide employee's first name:",
+            name: "firstName",
+          },
+          {
+            type: "input",
+            message: "Please provide employee's last name:",
+            name: "lastName",
+          },
+          {
+            type: "list",
+            message: "Please provide employee's role in the organization:",
+            name: "newRole",
+            choices: role,
+          },
+          {
+            type: "List",
+            message: "Please designate the employee's manager:",
+            name: "newManager",
+            choices: managerList,
+          }
+        );
+      }.then((data) => {
+        db.query(
+          "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);",
+          [data.firstName, data.lastName, data.newRole, data.newManager]
+        );
+      })
+    );
   });
-  inquirer
-    .prompt(
-      {
-        type: "input",
-        message: "Please provide employee's first name:",
-        name: "firstName",
-      },
-      {
-        type: "input",
-        message: "Please provide employee's last name:",
-        name: "lastName",
-      },
-      {
-        type: "list",
-        message: "Please provide employee's role in the organization:",
-        name: "newRole",
-        choices: role,
-      },
-      {
-        type: "List",
-        message: "Please designate the employee's manager:",
-        name: "newManager",
-      }
-    )
-    .then((answers) => {
-      db.query(
-        db.query("INSERT INTO department SET ?;", {
-          first_name: answers.firstName,
-          last_name: answers.lastName,
-          role_id: answers.newRole,
-          manager_id: answers.newManager,
-        })
-      );
-    });
 }
 
 function updateRole() {
@@ -214,32 +216,34 @@ function updateRole() {
           name: employeeName.first_name + " " + employeeName.last_name,
           value: employeeName.id,
         };
-      })
+      });
       const roleArray = roles.map((roleChoice) => {
         return {
           name: roleChoice.title,
           value: roleChoice.id,
         };
-      })
-    
-      inquirer.prompt([
-        {
-          type: "list",
-          message: "Please choose employee",
-          name: "employee",
-          choices: employeeArray
-        },
-        {
-          type: "list",
-          message: "Please choose a new role",
-          name: "newRole",
-          choices: roleArray
-        },
-      ]) .then(data => {
-        console.log(data);
-        viewDepartments();
-            startPrompt();
-      })
+      });
+
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            message: "Please choose employee",
+            name: "employee",
+            choices: employeeArray,
+          },
+          {
+            type: "list",
+            message: "Please choose a new role",
+            name: "newRole",
+            choices: roleArray,
+          },
+        ])
+        .then((data) => {
+          console.log(data);
+          viewDepartments();
+          startPrompt();
+        });
     });
   });
 }
