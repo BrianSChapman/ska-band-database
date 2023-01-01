@@ -160,21 +160,21 @@ function addRole() {
       });
   });
 }
-
+//  START HERE!!!!  USE THE addRole function as reference and see if this LEFT JOIN works.
 function addEmployee() {
-  db.query("SELECT * FROM role", function (err, roleInfo) {
-    db.query(
-      "SELECT manager_id FROM employee",
-      function (err, managerId) {
-        const role = roleInfo.map(({ department_id, title, salary }) => ({
-          department_id: department_id,
-          title: title,
-          salary: salary,
-        }));
-        const managerList = managerId.map(({ manager_id }) => ({
-          manager: manager_id,
-        }));
-        inquirer.prompt(
+   
+  db.query( "SELECT first_name, last_name, manager_id FROM employee LEFT JOIN role ON employee.role_id = role.id" , function (err, data) {
+      const role = data.map((data) => ({
+        title: data.title,
+      }));
+      const managerList = data.map((data) => ({
+        firstName: data.first_name,
+        lastName: data.last_name,
+      })); 
+
+      
+      inquirer
+        .prompt([
           {
             type: "input",
             message: "Please provide employee's first name:",
@@ -196,17 +196,17 @@ function addEmployee() {
             message: "Please designate the employee's manager:",
             name: "newManager",
             choices: managerList,
-          }
-        );
-      }.then((data) => {
-        db.query(
-          "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);",
-          [data.firstName, data.lastName, data.newRole, data.newManager]
-        );
-      })
-    );
-  });
+          },
+        ])
+        .then((data) => {
+          db.query(
+            "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);",
+            [data.firstName, data.lastName, data.newRole, data.newManager]
+          );
+        });
+    });
 }
+
 
 function updateRole() {
   db.query("SELECT * FROM employee", function (err, employees) {
