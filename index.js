@@ -160,19 +160,23 @@ function addRole() {
       });
   });
 }
-//  START HERE!!!!  USE THE addRole function as reference and see if this LEFT JOIN works.
-function addEmployee() {
-   
-  db.query( "SELECT first_name, last_name, manager_id FROM employee LEFT JOIN role ON employee.role_id = role.id" , function (err, data) {
-      const role = data.map((data) => ({
-        title: data.title,
-      }));
-      const managerList = data.map((data) => ({
-        firstName: data.first_name,
-        lastName: data.last_name,
-      })); 
 
-      
+function addEmployee() {
+  db.query("SELECT * FROM employee", function (err, employees) {
+    db.query("SELECT * FROM role", function (err, roles) {
+      const employeeArray = employees.map((employee) => {
+        return {
+          name: employee.first_name + " " + employee.last_name,
+          value: employee.id,
+        };
+      });
+      const roleArray = roles.map((roleChoice) => {
+        return {
+          name: roleChoice.title,
+          value: roleChoice.id,
+        };
+      });
+      console.log(employeeArray, roleArray)
       inquirer
         .prompt([
           {
@@ -189,24 +193,41 @@ function addEmployee() {
             type: "list",
             message: "Please provide employee's role in the organization:",
             name: "newRole",
-            choices: role,
+            choices: roleArray,
           },
           {
             type: "List",
             message: "Please designate the employee's manager:",
             name: "newManager",
-            choices: managerList,
+            choices: employeeArray,
           },
         ])
-        .then((data) => {
-          db.query(
-            "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);",
-            [data.firstName, data.lastName, data.newRole, data.newManager]
-          );
+        .then((answers) => {
+          // if (employeeArray.value !== null) {
+          //   employeeArray.value = null;
+          //   db.query(
+          //     "INSERT INTO employee (first_name, last_name, role_id, first_name) VALUES (?, ?, ?, ?);",
+          //     [
+          //       answers.firstName,
+          //       answers.lastName,
+          //       answers.newRole,
+          //       answers.newManager
+          //     ]
+          //   );
+          // } else {
+            db.query(
+              "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);",
+              [
+                answers.firstName,
+                answers.lastName,
+                answers.newRole,
+                answers.newManager,
+              ]
+            );
+          })
         });
     });
-}
-
+  };
 
 function updateRole() {
   db.query("SELECT * FROM employee", function (err, employees) {
