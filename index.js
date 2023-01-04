@@ -25,6 +25,7 @@ function startPrompt() {
       message: "Welcome! What would you like to do?",
       name: "welcome",
       choices: [
+        "View all",
         "View all departments",
         "View all roles",
         "View all employees",
@@ -38,6 +39,10 @@ function startPrompt() {
     // Function triggered by user's choice in initial prompt
     .then((answer) => {
       switch (answer.welcome) {
+        case "View all":
+          viewAll();
+          break;
+
         case "View all departments":
           viewDepartments();
           break;
@@ -45,7 +50,6 @@ function startPrompt() {
         case "View all roles":
           viewRoles();
           break;
-
         case "View all employees":
           viewEmployees();
           break;
@@ -69,6 +73,20 @@ function startPrompt() {
           process.exit();
       }
     });
+}
+
+function viewAll() {
+  db.query(
+    "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.department_name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;",
+    function (err, results) {
+      if (err) {
+        console.log(err)
+      } else {
+        console.table(results);
+        startPrompt();
+      }
+    }
+  );
 }
 
 function viewDepartments() {
@@ -176,7 +194,6 @@ function addEmployee() {
           value: roleChoice.id,
         };
       });
-      console.log(employeeArray, roleArray)
       inquirer
         .prompt([
           {
@@ -196,38 +213,28 @@ function addEmployee() {
             choices: roleArray,
           },
           {
-            type: "List",
+            type: "list",
             message: "Please designate the employee's manager:",
             name: "newManager",
             choices: employeeArray,
           },
         ])
         .then((answers) => {
-          // if (employeeArray.value !== null) {
-          //   employeeArray.value = null;
-          //   db.query(
-          //     "INSERT INTO employee (first_name, last_name, role_id, first_name) VALUES (?, ?, ?, ?);",
-          //     [
-          //       answers.firstName,
-          //       answers.lastName,
-          //       answers.newRole,
-          //       answers.newManager
-          //     ]
-          //   );
-          // } else {
-            db.query(
-              "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);",
-              [
-                answers.firstName,
-                answers.lastName,
-                answers.newRole,
-                answers.newManager,
-              ]
-            );
-          })
+          db.query(
+            "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);",
+            [
+              answers.firstName,
+              answers.lastName,
+              answers.newRole,
+              answers.newManager,
+            ]
+          );
+          viewAll()
+          startPrompt()
         });
     });
-  };
+  });
+}
 
 function updateRole() {
   db.query("SELECT * FROM employee", function (err, employees) {
@@ -245,6 +252,8 @@ function updateRole() {
         };
       });
 
+      // console.log(roleArray);
+
       inquirer
         .prompt([
           {
@@ -261,10 +270,22 @@ function updateRole() {
           },
         ])
         .then((data) => {
-          console.log(data);
-          viewDepartments();
+          db.query('UPDATE employee SET ? WHERE ?',[ 
+            {
+              role_id: data.newRole
+              
+            },
+            {
+              id: data.employee
+            }
+          ]
+          )
+          viewAll();
           startPrompt();
-        });
+        })
+        .catch(err => {
+          if (err) throw err
+        }) 
     });
   });
 }

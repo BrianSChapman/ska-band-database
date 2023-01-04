@@ -16,9 +16,9 @@ VALUES  ("Bass player", 35000, 3),
         ("Saxophone Player", 50000, 1);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES  ("Christopher","Jones", 7, 6),
-        ("Paul","Smith", 1, 6),
-        ("Lainey", "Edwards", 6, NULL),
-        ("Jeff", "Sykes", 3, 6),
-        ("Mickey","Southpaw", 4, 6);
+VALUES  ("Christopher","Jones", 7, 2),
+        ("Paul","Smith", 1, NULL),
+        ("Lainey", "Edwards", 6, 2),
+        ("Jeff", "Sykes", 3, 2),
+        ("Mickey","Southpaw", 4, 2);
 
